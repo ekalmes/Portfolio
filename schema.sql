@@ -1,35 +1,39 @@
-/* Database for a boardgame tournament
-Andrew Shallue, Fall 2020, CS 314
+/* Database example for CS 314 - Fall 2020
+Instructor: Andrew Shallue
+Credit: design due to Abdu Alawini
 */
 
-CREATE TABLE Players(
-  playerid int not NULL primary key,
-  name text
+CREATE TABLE Drinks(
+  name text,
+  manufacture text
 );
 
-CREATE TABLE Venues(
-  name text not NULL primary key,
-  capacity int,
-  address text
+CREATE TABLE Cafe(
+  name text,
+  addr text,
+  license float
 );
 
-CREATE TABLE Games(
-  gameid int not NULL primary key,
-  gamelength int,
-  winner int, 
-  venue text,
-  
-  -- winner references Players.playerid
-  foreign key (winner) references Players(playerid),
-  -- venue references Venues.name
-  foreign key (venue) references Venues (name)
+CREATE TABLE Customers(
+  cid int,
+  name text,
+  addr text,
+  phone int
 );
 
-CREATE TABLE CompeteIn(
-  playerid int,
-  gameid int,
+CREATE TABLE Likes(
+  customer int,
+  drink text,
+  foreign key (customer) references Customers(cid)
+);
 
-  -- foreign keys referes Players, Games
-  foreign key (playerid) references Players(playerid),
-  foreign key (gameid) references Games(gameid)
-)
+CREATE TABLE Sells(
+  cafe text,
+  drink text,
+  price int
+);
+
+CREATE TABLE Frequents(
+  customer int,
+  cafe text
+);

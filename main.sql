@@ -1,47 +1,64 @@
-/* Database for a boardgame tournament
-Andrew Shallue, Fall 2020, CS 314
+/* A toy cafe database for CS 314, HW 2
+  Andrew Shallue
+  Based on a schema designed by Abdu Alawini
+  Fall 2020
 
-Zeke Kalmes
+  Now with NULL values
 */
+
 
 .header on
 .mode column
-PRAGMA foreign_keys = ON;
+--.width 23  
 
 .read schema.sql
 .read data.sql
 
-Select *
-From Games;
+/* Problem 1
+r is an integer 
+v is another integer
 
--- #15 
-SELECT DISTINCT p.name --selects distinct player name
-FROM Games g -- from games table
-JOIN Players p -- joined with the players table
-    ON p.playerid = g.winner -- join on the fk winner which references playerid 
-WHERE g.venue LIKE "airporthotel"; -- find where the venue is the airporthotel
+a) { (10, r), (r, 20), (null, 20), (10, null) }
+b) { (10, 20) }
+c) { (r, v), (r, null) }
+d) { (r, r) }
+*/
 
--- #16 
-SELECT g.gameid --selects gameid 
-FROM Games g --from games table
-JOIN Players p --join games table on players table
-    ON p.playerid  = g.winner--join on the fk winner which references playerid 
-WHERE (p.name LIKE "Adams" 
-    OR p.name LIKE "Lopez") -- select where the names of the winners are adams or lopez
-    AND g.gamelength = 30; -- and the gamelength is 30 min
+/* Problem 2 */
+select addr, phone
+from Customers
+where addr like '%1st Ave' 
+	or phone like '309%';
 
--- #17 
-SELECT v.name, capacity, COUNT(c.playerid) -- selecting venue name, capacity, and the count of player id's 
-FROM Games g -- from the games table
-JOIN CompeteIn c -- which is joined on CompeteIn table
-    ON g.gameid = c.gameid-- via the gameid foreign keys
-JOIN Venues v --which is also joined on the venues table
-    ON v.name = g.venue --joined on the venue name in venues table and venue attribute from games table. 
-GROUP BY v.name; -- these results are grouped by the venue name. 
+/* Problem 3 */
+select c.name, count(l.drink)
+from Customers c
+left join Likes l
+	on c.cid = l.customer
+group by c.name;
 
--- #18
-SELECT p.name, COUNT(g.winner) -- selecting player name and the count of the number of times the names appear in winner 
-FROM Players p -- selcting from the players table 
-LEFT JOIN Games g -- left outer join on games table in order to get null values as requested in the problem
-    ON p.playerid = g.winner --joining on playerid and winner foreign keys in players and games table
-GROUP BY p.name; -- grouping the counts of wins by the names of players
+/* Problem 4 */
+select c.name, count(c1.name)
+from Cafe c
+left join Cafe c1
+	on c.name > c1.name
+group by c.name;
+
+
+/* Problem 5 */
+delete from Likes l
+where Likes.drink is null
+	or Likes.customer in (
+		select cid 
+		from Customers
+		where name like 'B%'
+	);
+
+/* Problem 6 */
+insert into Likes values
+	(10, 'Super Coffee'),
+	(11, 'Super Coffee');
+
+update Likes
+set drink = 'Cafe Classic'
+where customer = 5;
