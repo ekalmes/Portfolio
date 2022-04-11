@@ -1,0 +1,35 @@
+seti $1 1 # initialize t1 to 1
+seti $2 1 # initialize t2 to 1
+seti $3 0 # initialize nextTerm to 0
+seti $4 127 # 127 to add for 128
+seti $5 1 # special reg for 1
+add $4 $4 $5 # i is set to 128 for output loop
+seti $7 0 # iterator for n, initialized to 0
+
+input:
+  add $6 $input $zero # set $6 to n given by input. Assuming leftmost button is the MSB (2^7), rightmost is 2^0.  
+fibCondition:
+  add $branch $6 $zero # setting branch reg to input
+  beq outputCondition $7 # branch to outputCondition if n iterator = input
+  seti $branch 1 # check if input is 1
+  beq output1 $7 # branch to output1 if so
+  seti $branch 2 # check if input is 2
+  beq output1 $7 # branch to output1 if so
+fibLoop:
+  add $3 $2 $1 # nextTerm = t2 + t1
+  add $1 $2 $zero # t1 = t2
+  add $2 $3 $zero # t2 = nextTerm
+  add $7 $7 $5 # increment n iterator by 1, stored in $5
+  j fibCondition
+output1:
+  sb $1 $4 # output 1 if input is 1 or 2
+outputCondition:
+  add $8 $4 $3 # get upper range of memory established by nextTerm
+  add $branch $8 $zero # set branch to upper memory limit
+  beq exit $4 # branch to exit if i = upper memory limit
+outputLoop:
+  sb $5 $4 # store 1 in memory address set by i. starts at 128
+  add $4 $4 $5 # increment i iterator by 1, stored in $5
+  j outputCondition
+exit: 
+  j input
